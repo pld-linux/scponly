@@ -19,11 +19,11 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_bindir		/bin
 
 %description
-scponly is an alternative 'shell' (of sorts) for system
-administrators who would like to provide access to remote users to
-both read and write local files without providing any remote execution
-priviledges. Functionally, it is best described as a wrapper to the
-"tried and true" SSH suite of applications.
+scponly is an alternative 'shell' (of sorts) for system administrators
+who would like to provide access to remote users to both read and
+write local files without providing any remote execution priviledges.
+Functionally, it is best described as a wrapper to the "tried and
+true" SSH suite of applications.
 
 A typical usage of scponly is in creating a semi-public account not
 unlike the concept of anonymous login for FTP. This allows an
