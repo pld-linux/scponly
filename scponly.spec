@@ -191,35 +191,34 @@ mv -f /etc/shells.new /etc/shells
 %config(noreplace) %verify(not md5 size mtime) %{_datadir}/etc/ld.so.conf
 %config(noreplace) %verify(not md5 size mtime) %{_datadir}/etc/passwd
 
-%defattr(755,root,root,755)
 %dir %{_datadir}
 %dir %{_datadir}/bin
-%{_datadir}/bin/chgrp
-%{_datadir}/bin/chmod
-%{_datadir}/bin/chown
-%{_datadir}/bin/echo
-%{_datadir}/bin/id
-%{_datadir}/bin/ln
-%{_datadir}/bin/ls
-%{_datadir}/bin/mkdir
-%{_datadir}/bin/mv
-%{_datadir}/bin/pwd
-%{_datadir}/bin/rm
-%{_datadir}/bin/rmdir
+%attr(755,root,root) %{_datadir}/bin/chgrp
+%attr(755,root,root) %{_datadir}/bin/chmod
+%attr(755,root,root) %{_datadir}/bin/chown
+%attr(755,root,root) %{_datadir}/bin/echo
+%attr(755,root,root) %{_datadir}/bin/id
+%attr(755,root,root) %{_datadir}/bin/ln
+%attr(755,root,root) %{_datadir}/bin/ls
+%attr(755,root,root) %{_datadir}/bin/mkdir
+%attr(755,root,root) %{_datadir}/bin/mv
+%attr(755,root,root) %{_datadir}/bin/pwd
+%attr(755,root,root) %{_datadir}/bin/rm
+%attr(755,root,root) %{_datadir}/bin/rmdir
 
 %dir %{_datadir}/%{_lib}
-%{_datadir}/%{_lib}/ld-linux.so.*
-%{_datadir}/%{_lib}/lib*.so.*
+%attr(755,root,root) %{_datadir}/%{_lib}/ld-linux.so.*
+%attr(755,root,root) %{_datadir}/%{_lib}/lib*.so.*
 
 %dir %{_datadir}/usr
 %dir %{_datadir}/usr/bin
-%{_datadir}/usr/bin/groups
-%{_datadir}/usr/bin/scp
-%{_datadir}/usr/bin/rsync
+%attr(755,root,root) %{_datadir}/usr/bin/groups
+%attr(755,root,root) %{_datadir}/usr/bin/scp
+%attr(755,root,root) %{_datadir}/usr/bin/rsync
 
 %dir %{_datadir}/usr/%{_lib}
-%{_datadir}/usr/%{_lib}/lib*.so.*
-%{_datadir}/usr/%{_lib}/lib*.so
+%attr(755,root,root) %{_datadir}/usr/%{_lib}/lib*.so.*
+%attr(755,root,root) %{_datadir}/usr/%{_lib}/lib*.so
 %dir %{_datadir}/usr/%{_lib}/openssh
-%{_datadir}/usr/%{_lib}/openssh/sftp-server
+%attr(755,root,root) %{_datadir}/usr/%{_lib}/openssh/sftp-server
 %endif
