@@ -1,0 +1,23 @@
+--- ./scponly.8.orig    2004-11-28 22:23:35.000000000 +0200
++++ ./scponly.8    2005-02-03 02:36:42.000000000 +0200
+@@ -27,7 +27,7 @@
+ supports configuring potentially many users, each of which could be set
+ up to provide access to distinct directory trees.  Aside from the installation
+ details, each of these users would have their default shell in /etc/passwd set
+-to "/usr/local/bin/scponly" (or wherever you choose to install it).  This
++to "/sbin/scponly" (or wherever you choose to install it).  This
+ would mean users with this shell can neither login interactively or execute
+ commands remotely.  They can however, scp files in and out, governed by the
+ usual Unixish file permissions.
+@@ -93,9 +93,9 @@
+ .El
+ .Sh FILES
+ .Bl -tag -width base/sup/collection/checkouts*xx -compact
+-.It Pa /usr/local/bin/scponly
++.It Pa /sbin/scponly
+ The default location for the shell itself.
+-.It Pa /usr/local/sbin/scponlyc
++.It Pa /sbin/scponlyc
+ The default location for the chrooted version of 
+ .Nm
+ .It Pa /etc/shells
