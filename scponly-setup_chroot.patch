@@ -1,0 +1,58 @@
+--- scponly-4.0/setup_chroot.sh.in	2005-02-03 03:42:19.000000000 +0200
++++ scponly-4.0.fixed/setup_chroot.sh.in	2005-02-03 03:43:43.000000000 +0200
+@@ -14,11 +14,8 @@
+ getwd ( ) {
+ 	query="$1"
+ 	default="$2"
+-	echo -en "$query [$default]" | cat >&2
+-	read response
+-	if [ x$response = "x" ]; then
+-		response=$default
+-	fi
++	echo -e "$query [$default]" | cat >&2
++	response=$default
+ 	echo $response
+ }
+ 
+@@ -40,8 +37,8 @@
+ # configuration 
+ #
+ # set defaults
+-defaultusername="scponly"
+-defaulthomedirprefix="/home"
++defaultusername="$(id -un)"
++defaulthomedirprefix="$DESTDIR$ROOTDIR"
+ defaultwriteabledir="incoming"
+ 
+ osname=`uname -s | tr ' ' '_'`
+@@ -125,10 +122,7 @@
+ 
+ targetuser=`getwd "Username to install" "$defaultusername"`
+ username_collision=`id $targetuser > /dev/null 2> /dev/null; echo $?`
+-if [ $username_collision -eq 0 ] ; then
+-	fail "the user $targetuser already exists.  please remove this user and their home directory and try again."
+-fi 
+-targetdir=`getwd "home directory you wish to set for this user" "$defaulthomedirprefix/$targetuser"`
++targetdir=`getwd "home directory you wish to set for this user" "$defaulthomedirprefix"`
+ writeabledir=`getwd "name of the writeable subdirectory" "$defaultwriteabledir"`
+ 
+ #
+@@ -177,18 +171,6 @@
+ 	done
+ fi
+ 
+-if [ "x$USE_PW" = x0 ] ; then
+-    @PROG_USERADD@ -d "$targetdir" -s "@prefix@/sbin/@CHROOTED_NAME@" $targetuser
+-    if [ $? -ne 0 ]; then
+-         fail "if this user exists, remove it and try again"
+-    fi
+-else
+-    @PROG_PW@ useradd -n $targetuser -s "@prefix@/sbin/@CHROOTED_NAME@" -d "$targetdir"
+-    if [ $? -ne 0 ]; then
+-         fail "if this user exists, remove it and try again"
+-    fi
+-fi 
+-
+ #
+ #	we must ensure certain directories are root owned.
+ #
