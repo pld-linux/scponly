@@ -5,7 +5,7 @@
  up to provide access to distinct directory trees.  Aside from the installation
  details, each of these users would have their default shell in /etc/passwd set
 -to "/usr/local/bin/scponly" (or wherever you choose to install it).  This
-+to "/sbin/scponly" (or wherever you choose to install it).  This
++to "/usr/sbin/scponly" (or wherever you choose to install it).  This
  would mean users with this shell can neither login interactively or execute
  commands remotely.  They can however, scp files in and out, governed by the
  usual Unixish file permissions.
@@ -14,10 +14,10 @@
  .Sh FILES
  .Bl -tag -width base/sup/collection/checkouts*xx -compact
 -.It Pa /usr/local/bin/scponly
-+.It Pa /sbin/scponly
++.It Pa /usr/sbin/scponly
  The default location for the shell itself.
 -.It Pa /usr/local/sbin/scponlyc
-+.It Pa /sbin/scponlyc
++.It Pa /usr/sbin/scponlyc
  The default location for the chrooted version of 
  .Nm
  .It Pa /etc/shells
