@@ -1,24 +1,48 @@
+# TODO
+#  - make sure we don't provide the libraries
+#  - more comments needed on chroot package (write me ;)
+#  - store versioned libraries, and ldconfig the symlinks?
+#  - hard depend all libraries copied to runtime dep? (so they're urged
+#  to get updated scponly-chroot package when the library gets newer
+#  package)
+#  - separation for -chroot: rsync subpackage?
+#  - maybe there already exists generic chroot env provider package?
+#
+# Conditional build:
+%bcond_with	chroot # build experimental chroot package
 Summary:	A restricted shell for assigning scp- or sftp-only access
 Summary(pl):	Okrojona pow³oka daj±ca dostêp tylko do scp i/lub sftp
 Name:		scponly
 Version:	4.0
-Release:	1
+Release:	1.13
 License:	BSD-like
 Group:		Applications/Shells
 Source0:	http://www.sublimation.org/scponly/%{name}-%{version}.tgz
 # Source0-md5:	1706732945996865ed0cccd440b64fc1
 Patch0:		%{name}-sftp_path.patch
 Patch1:		%{name}-DESTDIR.patch
+Patch2:		%{name}-man.patch
+Patch3:		%{name}-setup_chroot.patch
 URL:		http://www.sublimation.org/scponly/
 BuildRequires:	autoconf
 BuildRequires:	automake
+%if %{with chroot}
+# These are for building chroot jail package
+BuildRequires:	fakeroot
+BuildRequires:	coreutils
+BuildRequires:	openssh-clients
 BuildRequires:	openssh-server
-#BuildRequires:	openssh-clients >= 3.5p1
-#Conflicts:	openssh-server < 3.5p1
+BuildRequires:	rsync
+%endif
 Requires(post,preun):	grep
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		_bindir		/bin
+%if %{with chroot}
+# better destination?
+%define		_datadir	/usr/lib/%{name}
+%define		_noautoprovfiles	%{_datadir}
+%define		_noautoreqfiles	%{_datadir}
+%endif
 
 %description
 scponly is an alternative 'shell' (of sorts) for system administrators
@@ -47,15 +71,35 @@ anonimowe FTP, ale z u¿yciem ochrony zapewnianej przez SSH. Ma to
 szczególne znaczenie w przypadku uwierzytelniania FTP poprzez sieæ
 publiczn±.
 
+%package chroot
+Summary:	Chroot capable scponly
+Group:		Applications/Shells
+License:	BSD-like
+# + No idea due packaging system libraries
+Requires(post,preun):	grep
+
+%description chroot
+This package contains suid binary for scponly. As the scponly is
+called after authorized user is logged in, it is needed to have suid
+bit to do chroot() system call. You should read INSTALL from the main
+package to understand what implications this suid binary installations
+could bring.
+
 %prep
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
+%patch3 -p1
 
 %build
 %{__aclocal}
 %{__autoconf}
-%configure
+%configure \
+	--bindir=%{_sbindir} \
+	--enable-rsync-compat \
+	--with-sftp-server=%{_prefix}/%{_lib}/openssh/sftp-server \
+	%{?with_chroot:--enable-chrooted-binary} \
 
 %{__make}
 
@@ -65,32 +109,117 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	 DESTDIR=$RPM_BUILD_ROOT
 
+# compat, we can't afford trigger changes in /etc/passwd
+install -d $RPM_BUILD_ROOT/bin
+ln -s ..%{_bindir}/scponly $RPM_BUILD_ROOT/bin
+
+%if %{with chroot}
+# TODO: implement the setup_chroot.sh here, to be sure how it works.
+DESTDIR=$RPM_BUILD_ROOT ROOTDIR=%{_datadir} fakeroot sh ./setup_chroot.sh
+
+echo 'root:x:0:0:root:/root:/bin/sh' > $RPM_BUILD_ROOT%{_datadir}/etc/passwd
+echo '' > $RPM_BUILD_ROOT%{_datadir}/etc/ld.so.conf
+install groups $RPM_BUILD_ROOT%{_datadir}/usr/bin
+rm -rf $RPM_BUILD_ROOT%{_datadir}/usr/%{_lib}/libfakeroot
+%endif
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
 umask 022
 if [ ! -f /etc/shells ]; then
-	echo "%{_bindir}/%{name}" > /etc/shells
+	echo '%{_sbindir}/%{name}' > /etc/shells
 else
-	if ! grep -q '^%{_bindir}/%{name}$' /etc/shells; then
-		echo "%{_bindir}/%{name}" >> /etc/shells
+	if ! grep -q '^%{_sbindir}/%{name}$' /etc/shells; then
+		echo '%{_sbindir}/%{name}' >> /etc/shells
 	fi
 fi
 
 %preun
 umask 022
 if [ "$1" = "0" ]; then
-	grep -v %{_bindir}/%{name} /etc/shells > /etc/shells.new
+	grep -v '^%{_sbindir}/%{name}$' /etc/shells > /etc/shells.new
 	mv -f /etc/shells.new /etc/shells
 fi
 
+%if %{with chroot}
+%post chroot
+umask 022
+if [ ! -f /etc/shells ]; then
+	echo '%{_sbindir}/%{name}c' > /etc/shells
+else
+	if ! grep -q '^%{_sbindir}/%{name}c$' /etc/shells; then
+		echo '%{_sbindir}/%{name}c' >> /etc/shells
+	fi
+fi
+
+# build ld.so.ccache
+ldconfig -X -r %{_datadir}
+
+%preun chroot
+umask 022
+if [ "$1" = "0" ]; then
+	grep -v '^%{_sbindir}/%{name}c$' /etc/shells > /etc/shells.new
+	mv -f /etc/shells.new /etc/shells
+fi
+%endif
+
+%triggerpostun -- scponly < 4.0-1.5
+umask 022
+grep -v '^/bin/scponly$' /etc/shells > /etc/shells.new
+mv -f /etc/shells.new /etc/shells
+
 %files
 %defattr(644,root,root,755)
-%doc AUTHOR CHANGELOG CONTRIB INSTALL README TODO setup_chroot.sh
+%doc AUTHOR CHANGELOG CONTRIB INSTALL README TODO
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/%{name}/*
-%attr(755,root,root) %{_bindir}/%{name}
-# There is also similar binary - use proper configure option (maybe separate subpackage?)
-#%attr(4755,root,root) %{_sbindir}/scponlyc
+%attr(755,root,root) %{_sbindir}/%{name}
 %{_mandir}/man?/*
+# old compat symlink
+/bin/scponly
+
+%if %{with chroot}
+%files chroot
+%defattr(644,root,root,755)
+%doc setup_chroot.sh
+%attr(4755,root,root) %{_sbindir}/scponlyc
+
+%dir %{_datadir}/etc
+%ghost %{_datadir}/etc/ld.so.cache
+%config(noreplace) %verify(not md5 size mtime) %{_datadir}/etc/ld.so.conf
+%config(noreplace) %verify(not md5 size mtime) %{_datadir}/etc/passwd
+
+%defattr(755,root,root,755)
+%dir %{_datadir}
+%dir %{_datadir}/bin
+%{_datadir}/bin/chgrp
+%{_datadir}/bin/chmod
+%{_datadir}/bin/chown
+%{_datadir}/bin/echo
+%{_datadir}/bin/id
+%{_datadir}/bin/ln
+%{_datadir}/bin/ls
+%{_datadir}/bin/mkdir
+%{_datadir}/bin/mv
+%{_datadir}/bin/pwd
+%{_datadir}/bin/rm
+%{_datadir}/bin/rmdir
+
+%dir %{_datadir}/%{_lib}
+%{_datadir}/%{_lib}/ld-linux.so.*
+%{_datadir}/%{_lib}/lib*.so.*
+
+%dir %{_datadir}/usr
+%dir %{_datadir}/usr/bin
+%{_datadir}/usr/bin/groups
+%{_datadir}/usr/bin/scp
+%{_datadir}/usr/bin/rsync
+
+%dir %{_datadir}/usr/%{_lib}
+%{_datadir}/usr/%{_lib}/lib*.so.*
+%{_datadir}/usr/%{_lib}/lib*.so
+%dir %{_datadir}/usr/%{_lib}/openssh
+%{_datadir}/usr/%{_lib}/openssh/sftp-server
+%endif
