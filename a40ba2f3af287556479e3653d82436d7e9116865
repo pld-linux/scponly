@@ -1,0 +1,2 @@
+- BR openssh-server (configure will fail if it can't locate sftp-server)
+- R(post,preun): grep
