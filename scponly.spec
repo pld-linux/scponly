@@ -14,7 +14,7 @@ Summary:	A restricted shell for assigning scp- or sftp-only access
 Summary(pl):	Okrojona pow³oka daj±ca dostêp tylko do scp i/lub sftp
 Name:		scponly
 Version:	4.0
-Release:	1.13
+Release:	1.15
 License:	BSD-like
 Group:		Applications/Shells
 Source0:	http://www.sublimation.org/scponly/%{name}-%{version}.tgz
@@ -111,7 +111,7 @@ rm -rf $RPM_BUILD_ROOT
 
 # compat, we can't afford trigger changes in /etc/passwd
 install -d $RPM_BUILD_ROOT/bin
-ln -s ..%{_bindir}/scponly $RPM_BUILD_ROOT/bin
+ln -s ..%{_sbindir}/scponly $RPM_BUILD_ROOT/bin/scponly
 
 %if %{with chroot}
 # TODO: implement the setup_chroot.sh here, to be sure how it works.
