@@ -12,8 +12,10 @@ Patch1:		%{name}-DESTDIR.patch
 URL:		http://www.sublimation.org/scponly/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	openssh-server
 #BuildRequires:	openssh-clients >= 3.5p1
 #Conflicts:	openssh-server < 3.5p1
+Requires(post,preun):	grep
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_bindir		/bin
