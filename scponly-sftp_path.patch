@@ -1,0 +1,11 @@
+--- ./configure.in.org	Tue Dec 28 12:41:46 2004
++++ ./configure.in	Tue Dec 28 12:41:37 2004
+@@ -200,7 +200,7 @@
+ 
+ if test "x$scponly_scp_compat" != "x"; then
+ 	AC_MSG_NOTICE([enabling core WinSCP and Vanilla SCP binaries...])
+-	SCPONLY_PATH_PROG_DEFINE([PROG_SFTP_SERVER], [sftp-server],[/usr/lib:/usr/libexec:/usr/libexec/openssh:/usr/lib/ssh:/usr/local/libexec])
++	SCPONLY_PATH_PROG_DEFINE([PROG_SFTP_SERVER], [sftp-server],[/usr/lib:/usr/libexec:/usr/libexec/openssh:/usr/lib/openssh:/usr/lib/ssh:/usr/local/libexec])
+ 	SCPONLY_PATH_PROG_DEFINE([PROG_LS],    [ls],    [/bin:/usr/bin:/sbin:/usr/sbin])
+ 	SCPONLY_PATH_PROG_DEFINE([PROG_SCP],   [scp],   [/bin:/usr/bin:/sbin:/usr/sbin])
+ 	SCPONLY_PATH_PROG_DEFINE([PROG_RM],    [rm],    [/bin:/usr/bin:/sbin:/usr/sbin])
