@@ -28,8 +28,8 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 %if %{with chroot}
 # These are for building chroot jail package
-BuildRequires:	fakeroot
 BuildRequires:	coreutils
+BuildRequires:	fakeroot
 BuildRequires:	openssh-clients
 BuildRequires:	openssh-server
 BuildRequires:	rsync
@@ -174,7 +174,7 @@ mv -f /etc/shells.new /etc/shells
 %defattr(644,root,root,755)
 %doc AUTHOR CHANGELOG CONTRIB INSTALL README TODO
 %dir %{_sysconfdir}/%{name}
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/%{name}/*
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/*
 %attr(755,root,root) %{_sbindir}/%{name}
 %{_mandir}/man?/*
 # old compat symlink
@@ -188,8 +188,8 @@ mv -f /etc/shells.new /etc/shells
 
 %dir %{_datadir}/etc
 %ghost %{_datadir}/etc/ld.so.cache
-%config(noreplace) %verify(not md5 size mtime) %{_datadir}/etc/ld.so.conf
-%config(noreplace) %verify(not md5 size mtime) %{_datadir}/etc/passwd
+%config(noreplace) %verify(not md5 mtime size) %{_datadir}/etc/ld.so.conf
+%config(noreplace) %verify(not md5 mtime size) %{_datadir}/etc/passwd
 
 %dir %{_datadir}
 %dir %{_datadir}/bin
