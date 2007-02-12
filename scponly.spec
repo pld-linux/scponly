@@ -11,7 +11,7 @@
 # Conditional build:
 %bcond_with	chroot # build experimental chroot package
 Summary:	A restricted shell for assigning scp- or sftp-only access
-Summary(pl):	Okrojona pow³oka daj±ca dostêp tylko do scp i/lub sftp
+Summary(pl.UTF-8):   Okrojona powÅ‚oka dajÄ…ca dostÄ™p tylko do scp i/lub sftp
 Name:		scponly
 Version:	4.0
 Release:	1.15
@@ -58,18 +58,18 @@ only employing all the protection that SSH provides. This is
 especially significant if you consider that FTP authentications
 traverse public networks in a plaintext format.
 
-%description -l pl
-scponly to alternatywna "pow³oka" dla administratorów systemu, którzy
-chcieliby udostêpniæ zdalnym u¿ytkownikom mo¿liwo¶æ odczytu i zapisu
-plików lokalnych bez prawa wykonywania poleceñ. Funkcjonalno¶æ mo¿na
-najlepiej okre¶liæ jako wrapper dla sprawdzonego zbioru aplikacji SSH.
+%description -l pl.UTF-8
+scponly to alternatywna "powÅ‚oka" dla administratorÃ³w systemu, ktÃ³rzy
+chcieliby udostÄ™pniÄ‡ zdalnym uÅ¼ytkownikom moÅ¼liwoÅ›Ä‡ odczytu i zapisu
+plikÃ³w lokalnych bez prawa wykonywania poleceÅ„. FunkcjonalnoÅ›Ä‡ moÅ¼na
+najlepiej okreÅ›liÄ‡ jako wrapper dla sprawdzonego zbioru aplikacji SSH.
 
-Typowy sposób u¿ycia scponly to stworzenie prawie publicznego konta
-podobnie do idei anonimowego dostêpu do FTP. Pozwala to
-administratorowi na wspó³dzielenie plików w ten sam sposób co
-anonimowe FTP, ale z u¿yciem ochrony zapewnianej przez SSH. Ma to
-szczególne znaczenie w przypadku uwierzytelniania FTP poprzez sieæ
-publiczn±.
+Typowy sposÃ³b uÅ¼ycia scponly to stworzenie prawie publicznego konta
+podobnie do idei anonimowego dostÄ™pu do FTP. Pozwala to
+administratorowi na wspÃ³Å‚dzielenie plikÃ³w w ten sam sposÃ³b co
+anonimowe FTP, ale z uÅ¼yciem ochrony zapewnianej przez SSH. Ma to
+szczegÃ³lne znaczenie w przypadku uwierzytelniania FTP poprzez sieÄ‡
+publicznÄ….
 
 %package chroot
 Summary:	Chroot capable scponly
