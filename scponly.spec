@@ -11,7 +11,7 @@
 # Conditional build:
 %bcond_with	chroot # build experimental chroot package
 Summary:	A restricted shell for assigning scp- or sftp-only access
-Summary(pl.UTF-8):   Okrojona powłoka dająca dostęp tylko do scp i/lub sftp
+Summary(pl.UTF-8):	Okrojona powłoka dająca dostęp tylko do scp i/lub sftp
 Name:		scponly
 Version:	4.0
 Release:	1.15
