@@ -1,29 +1,21 @@
---- ./Makefile.in.org	Thu Nov 20 07:04:53 2003
-+++ ./Makefile.in	Tue Dec 28 12:47:26 2004
-@@ -35,17 +35,17 @@
- 	${CC} ${CFLAGS} ${DEFS} -o $@ -c $<
- 
- install: scponly debuglevel scponly.8
--	${INSTALL} -d ${bindir}
--	${INSTALL} -d ${mandir}/man8
--	${INSTALL} -d ${CONFDIR}
--	${INSTALL} -o 0 -g 0 scponly ${bindir}/scponly
--	${INSTALL} -o 0 -g 0 -m 0644 scponly.8 ${mandir}/man8/scponly.8
--	${INSTALL} -o 0 -g 0 -m 0644 debuglevel ${DEBUGFILE}
-+	${INSTALL} -d ${DESTDIR}${bindir}
-+	${INSTALL} -d ${DESTDIR}${mandir}/man8
-+	${INSTALL} -d ${DESTDIR}${CONFDIR}
+--- scponly-4.6/Makefile.in.orig	2005-03-18 09:40:44.000000000 +0100
++++ scponly-4.6/Makefile.in	2007-04-11 12:44:38.064394317 +0200
+@@ -38,14 +38,14 @@
+ 	${INSTALL} -d ${DESTDIR}${bindir}
+ 	${INSTALL} -d ${DESTDIR}${mandir}/man8
+ 	${INSTALL} -d ${DESTDIR}${CONFDIR}
+-	${INSTALL} -o 0 -g 0 scponly ${DESTDIR}${bindir}/scponly
+-	${INSTALL} -o 0 -g 0 -m 0644 scponly.8 ${DESTDIR}${mandir}/man8/scponly.8
+-	${INSTALL} -o 0 -g 0 -m 0644 debuglevel ${DESTDIR}${DEBUGFILE}
 +	${INSTALL} scponly ${DESTDIR}${bindir}/scponly
-+	${INSTALL} scponly.8 ${DESTDIR}${mandir}/man8/scponly.8
-+	${INSTALL} debuglevel ${DESTDIR}${DEBUGFILE}
++	${INSTALL} -m 0644 scponly.8 ${DESTDIR}${mandir}/man8/scponly.8
++	${INSTALL} -m 0644 debuglevel ${DESTDIR}${DEBUGFILE}
  	if test "x${CHROOTED_NAME}" != "x"; then			\
--		${INSTALL} -d ${sbindir};				\
--		rm -f ${sbindir}/${CHROOTED_NAME};			\
-+		${INSTALL} -d ${DESTDIR}${sbindir};			\
-+		rm -f ${DESTDIR}${sbindir}/${CHROOTED_NAME};		\
+ 		${INSTALL} -d ${DESTDIR}${sbindir};				\
+ 		rm -f ${DESTDIR}${sbindir}/${CHROOTED_NAME};			\
  		cp scponly ${CHROOTED_NAME};				\
--		${INSTALL} -o 0 -g 0 -m 4755 ${CHROOTED_NAME} ${sbindir}/${CHROOTED_NAME};	\
-+		${INSTALL} ${CHROOTED_NAME} ${DESTDIR}${sbindir}/${CHROOTED_NAME};	\
+-		${INSTALL} -o 0 -g 0 -m 4755 ${CHROOTED_NAME} ${DESTDIR}${sbindir}/${CHROOTED_NAME};	\
++		${INSTALL} -m 755 ${CHROOTED_NAME} ${DESTDIR}${sbindir}/${CHROOTED_NAME};	\
  	fi
  
  debuglevel:
