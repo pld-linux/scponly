@@ -9,21 +9,23 @@
 #  - maybe there already exists generic chroot env provider package?
 #
 # Conditional build:
-%bcond_with	chroot # build experimental chroot package
+%bcond_with	chroot	# build experimental chroot package
+#
 Summary:	A restricted shell for assigning scp- or sftp-only access
 Summary(pl.UTF-8):	Okrojona powłoka dająca dostęp tylko do scp i/lub sftp
 Name:		scponly
-Version:	4.0
-Release:	1.15
+Version:	4.6
+Release:	0.1
 License:	BSD-like
 Group:		Applications/Shells
-Source0:	http://www.sublimation.org/scponly/%{name}-%{version}.tgz
-# Source0-md5:	1706732945996865ed0cccd440b64fc1
+#Source0Download: http://sublimation.org/scponly/wiki/index.php/Download
+Source0:	http://sublimation.org/scponly/%{name}-%{version}.tgz
+# Source0-md5:	0425cb868cadd026851238452f1db907
 Patch0:		%{name}-sftp_path.patch
 Patch1:		%{name}-DESTDIR.patch
 Patch2:		%{name}-man.patch
 Patch3:		%{name}-setup_chroot.patch
-URL:		http://www.sublimation.org/scponly/
+URL:		http://sublimation.org/scponly/
 BuildRequires:	autoconf
 BuildRequires:	automake
 %if %{with chroot}
@@ -41,7 +43,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # better destination?
 %define		_datadir	/usr/lib/%{name}
 %define		_noautoprovfiles	%{_datadir}
-%define		_noautoreqfiles	%{_datadir}
+%define		_noautoreqfiles		%{_datadir}
 %endif
 
 %description
@@ -73,6 +75,7 @@ publiczną.
 
 %package chroot
 Summary:	Chroot capable scponly
+Summary(pl.UTF-8):	scponly wykonujące chroot
 Group:		Applications/Shells
 License:	BSD-like
 # + No idea due packaging system libraries
@@ -84,6 +87,13 @@ called after authorized user is logged in, it is needed to have suid
 bit to do chroot() system call. You should read INSTALL from the main
 package to understand what implications this suid binary installations
 could bring.
+
+%description chroot -l pl.UTF-8
+Ten pakiet zawiera program scponly z ustawionym bitem suid. Jako że
+scponly jest wywoływane po zalogowaniu autoryzowanego użytkownika,
+musi mieć ten bit ustawiony w celu wykonania wywołania chroot(). O
+konsekwencjach tego można przeczytać w pliku INSTALL z głównego
+pakietu.
 
 %prep
 %setup -q
@@ -178,7 +188,7 @@ mv -f /etc/shells.new /etc/shells
 %attr(755,root,root) %{_sbindir}/%{name}
 %{_mandir}/man?/*
 # old compat symlink
-/bin/scponly
+%attr(755,root,root) /bin/scponly
 
 %if %{with chroot}
 %files chroot
