@@ -36,6 +36,8 @@ BuildRequires:	openssh-clients
 BuildRequires:	openssh-server
 BuildRequires:	rsync
 %endif
+# SECURITY: http://securitytracker.com/alerts/2007/Dec/1019103.html [CVE-2007-6350]
+BuildRequires:	FIXME(security)
 Requires(post,preun):	grep
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
