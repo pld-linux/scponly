@@ -18,8 +18,7 @@ Version:	4.8
 Release:	0.1
 License:	BSD-like
 Group:		Applications/Shells
-#Source0Download: http://sublimation.org/scponly/wiki/index.php/Download
-Source0:	http://surfnet.dl.sourceforge.net/sourceforge/scponly/%{name}-%{version}.tgz
+Source0:	http://dl.sourceforge.net/sourceforge/scponly/%{name}-%{version}.tgz
 # Source0-md5:	139ac9abd7f3b8dbc5c5520745318f8a
 Patch0:		%{name}-sftp_path.patch
 Patch1:		%{name}-DESTDIR.patch
@@ -97,7 +96,7 @@ pakietu.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
