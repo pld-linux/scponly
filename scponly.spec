@@ -18,7 +18,7 @@ Version:	4.8
 Release:	0.1
 License:	BSD-like
 Group:		Applications/Shells
-Source0:	http://dl.sourceforge.net/sourceforge/scponly/%{name}-%{version}.tgz
+Source0:	http://dl.sourceforge.net/scponly/%{name}-%{version}.tgz
 # Source0-md5:	139ac9abd7f3b8dbc5c5520745318f8a
 Patch0:		%{name}-sftp_path.patch
 Patch1:		%{name}-DESTDIR.patch
