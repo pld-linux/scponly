@@ -14,13 +14,13 @@
 Summary:	A restricted shell for assigning scp- or sftp-only access
 Summary(pl.UTF-8):	Okrojona powłoka dająca dostęp tylko do scp i/lub sftp
 Name:		scponly
-Version:	4.6
+Version:	4.8
 Release:	0.1
 License:	BSD-like
 Group:		Applications/Shells
 #Source0Download: http://sublimation.org/scponly/wiki/index.php/Download
-Source0:	http://sublimation.org/scponly/%{name}-%{version}.tgz
-# Source0-md5:	0425cb868cadd026851238452f1db907
+Source0:	http://surfnet.dl.sourceforge.net/sourceforge/scponly/%{name}-%{version}.tgz
+# Source0-md5:	139ac9abd7f3b8dbc5c5520745318f8a
 Patch0:		%{name}-sftp_path.patch
 Patch1:		%{name}-DESTDIR.patch
 Patch2:		%{name}-man.patch
@@ -34,11 +34,8 @@ BuildRequires:	coreutils
 BuildRequires:	fakeroot
 BuildRequires:	openssh-clients
 BuildRequires:	openssh-server
-BuildRequires:	rsync
 %endif
-# SECURITY: http://securitytracker.com/alerts/2007/Dec/1019103.html [CVE-2007-6350]
-# CVE-2007-6415
-BuildRequires:	FIXME(security)
+BuildRequires:	rsync
 Requires(post,preun):	grep
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
