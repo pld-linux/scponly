@@ -75,8 +75,7 @@ Summary:	Chroot capable scponly
 Summary(pl.UTF-8):	scponly wykonujące chroot
 License:	BSD-like
 Group:		Applications/Shells
-# + No idea due packaging system libraries
-Requires(post):	grep
+# Requires: No idea due packaging system libraries
 
 %description chroot
 This package contains suid binary for scponly. As the scponly is
@@ -142,18 +141,11 @@ if arg[2] == 0 then
 	%lua_remove_etc_shells %{_sbindir}/%{name}
 end
 
-%post chroot
-umask 022
-if [ ! -f /etc/shells ]; then
-	echo '%{_sbindir}/scponlyc' > /etc/shells
-else
-if ! grep -q '^%{_sbindir}/scponlyc$' /etc/shells; then
-	echo '%{_sbindir}/scponlyc' >> /etc/shells
-	fi
-fi
+%post -p <lua> chroot
+%lua_add_etc_shells %{_sbindir}/scponlyc
 
 # build ld.so.ccache
-/sbin/ldconfig -X -r %{_datadir}
+os.execute("/sbin/ldconfig -X -r %{_datadir}")
 
 %preun  -p <lua> chroot
 if arg[2] == 0 then
