@@ -15,7 +15,7 @@ Summary:	A restricted shell for assigning scp- or sftp-only access
 Summary(pl.UTF-8):	Okrojona powłoka dająca dostęp tylko do scp i/lub sftp
 Name:		scponly
 Version:	4.8
-Release:	0.1
+Release:	0.2
 License:	BSD-like
 Group:		Applications/Shells
 Source0:	http://dl.sourceforge.net/scponly/%{name}-%{version}.tgz
@@ -34,8 +34,8 @@ BuildRequires:	coreutils
 BuildRequires:	fakeroot
 BuildRequires:	openssh-clients
 BuildRequires:	openssh-server
-BuildRequires:	rsync
 %endif
+BuildRequires:	rsync
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 # better destination?
@@ -105,6 +105,7 @@ cp -f /usr/share/automake/config.sub .
 %configure \
 	--bindir=%{_sbindir} \
 	--enable-rsync-compat \
+	--enable-scp-compat \
 	--with-sftp-server=%{_libdir}/openssh/sftp-server \
 	%{?with_chroot:--enable-chrooted-binary} \
 
