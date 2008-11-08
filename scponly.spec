@@ -134,20 +134,20 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/usr/%{_lib}/libfakeroot
 rm -rf $RPM_BUILD_ROOT
 
 %post	-p <lua>
-%lua_add_etc_shells %{_sbindir}/%{name}
+%lua_add_etc_shells %{_sbindir}/scponly
 
 %preun	-p <lua>
 if arg[2] == 0 then
-	%lua_remove_etc_shells %{_sbindir}/%{name}
+	%lua_remove_etc_shells %{_sbindir}/scponly
 end
 
 %post -p <lua> chroot
 %lua_add_etc_shells %{_sbindir}/scponlyc
 
-# build ld.so.ccache
+-- build ld.so.ccache
 os.execute("/sbin/ldconfig -X -r %{_datadir}")
 
-%preun  -p <lua> chroot
+%preun -p <lua> chroot
 if arg[2] == 0 then
 	%lua_remove_etc_shells %{_sbindir}/scponlyc
 end
@@ -160,7 +160,7 @@ end
 %doc AUTHOR CHANGELOG CONTRIB INSTALL README TODO
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/debuglevel
-%attr(755,root,root) %{_sbindir}/%{name}
+%attr(755,root,root) %{_sbindir}/scponly
 %{_mandir}/man?/*
 # old compat symlink
 %attr(755,root,root) /bin/scponly
