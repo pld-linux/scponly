@@ -27,23 +27,21 @@ Patch3:		%{name}-setup_chroot.patch
 URL:		http://sublimation.org/scponly/
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	rpmbuild(macros) >= 1.462
 %if %{with chroot}
 # These are for building chroot jail package
 BuildRequires:	coreutils
 BuildRequires:	fakeroot
 BuildRequires:	openssh-clients
 BuildRequires:	openssh-server
-%endif
 BuildRequires:	rsync
-Requires(post,preun):	grep
+%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%if %{with chroot}
 # better destination?
-%define		_datadir	/usr/lib/%{name}
+%define		_datadir			%{_libdir}/%{name}
 %define		_noautoprovfiles	%{_datadir}
 %define		_noautoreqfiles		%{_datadir}
-%endif
 
 %description
 scponly is an alternative 'shell' (of sorts) for system administrators
@@ -75,10 +73,10 @@ publiczną.
 %package chroot
 Summary:	Chroot capable scponly
 Summary(pl.UTF-8):	scponly wykonujące chroot
-Group:		Applications/Shells
 License:	BSD-like
+Group:		Applications/Shells
 # + No idea due packaging system libraries
-Requires(post,preun):	grep
+Requires(post):	grep
 
 %description chroot
 This package contains suid binary for scponly. As the scponly is
@@ -102,12 +100,13 @@ pakietu.
 %patch3 -p1
 
 %build
+cp -f /usr/share/automake/config.sub .
 %{__aclocal}
 %{__autoconf}
 %configure \
 	--bindir=%{_sbindir} \
 	--enable-rsync-compat \
-	--with-sftp-server=%{_prefix}/%{_lib}/openssh/sftp-server \
+	--with-sftp-server=%{_libdir}/openssh/sftp-server \
 	%{?with_chroot:--enable-chrooted-binary} \
 
 %{__make}
@@ -135,55 +134,40 @@ rm -rf $RPM_BUILD_ROOT%{_datadir}/usr/%{_lib}/libfakeroot
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-umask 022
-if [ ! -f /etc/shells ]; then
-	echo '%{_sbindir}/%{name}' > /etc/shells
-else
-	if ! grep -q '^%{_sbindir}/%{name}$' /etc/shells; then
-		echo '%{_sbindir}/%{name}' >> /etc/shells
-	fi
-fi
+%post	-p <lua>
+%lua_add_etc_shells %{_sbindir}/%{name}
 
-%preun
-umask 022
-if [ "$1" = "0" ]; then
-	grep -v '^%{_sbindir}/%{name}$' /etc/shells > /etc/shells.new
-	mv -f /etc/shells.new /etc/shells
-fi
+%preun	-p <lua>
+if arg[2] == 0 then
+	%lua_remove_etc_shells %{_sbindir}/%{name}
+end
 
-%if %{with chroot}
 %post chroot
 umask 022
 if [ ! -f /etc/shells ]; then
-	echo '%{_sbindir}/%{name}c' > /etc/shells
+	echo '%{_sbindir}/scponlyc' > /etc/shells
 else
-	if ! grep -q '^%{_sbindir}/%{name}c$' /etc/shells; then
-		echo '%{_sbindir}/%{name}c' >> /etc/shells
+if ! grep -q '^%{_sbindir}/scponlyc$' /etc/shells; then
+	echo '%{_sbindir}/scponlyc' >> /etc/shells
 	fi
 fi
 
 # build ld.so.ccache
-ldconfig -X -r %{_datadir}
+/sbin/ldconfig -X -r %{_datadir}
 
-%preun chroot
-umask 022
-if [ "$1" = "0" ]; then
-	grep -v '^%{_sbindir}/%{name}c$' /etc/shells > /etc/shells.new
-	mv -f /etc/shells.new /etc/shells
-fi
-%endif
+%preun  -p <lua> chroot
+if arg[2] == 0 then
+	%lua_remove_etc_shells %{_sbindir}/scponlyc
+end
 
-%triggerpostun -- scponly < 4.0-1.5
-umask 022
-grep -v '^/bin/scponly$' /etc/shells > /etc/shells.new
-mv -f /etc/shells.new /etc/shells
+%triggerpostun -p <lua> -- scponly < 4.0-1.5
+%lua_remove_etc_shells /bin/scponly
 
 %files
 %defattr(644,root,root,755)
 %doc AUTHOR CHANGELOG CONTRIB INSTALL README TODO
 %dir %{_sysconfdir}/%{name}
-%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/*
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/debuglevel
 %attr(755,root,root) %{_sbindir}/%{name}
 %{_mandir}/man?/*
 # old compat symlink
@@ -202,32 +186,22 @@ mv -f /etc/shells.new /etc/shells
 
 %dir %{_datadir}
 %dir %{_datadir}/bin
-%attr(755,root,root) %{_datadir}/bin/chgrp
-%attr(755,root,root) %{_datadir}/bin/chmod
-%attr(755,root,root) %{_datadir}/bin/chown
-%attr(755,root,root) %{_datadir}/bin/echo
 %attr(755,root,root) %{_datadir}/bin/id
-%attr(755,root,root) %{_datadir}/bin/ln
-%attr(755,root,root) %{_datadir}/bin/ls
-%attr(755,root,root) %{_datadir}/bin/mkdir
-%attr(755,root,root) %{_datadir}/bin/mv
+%attr(755,root,root) %{_datadir}/bin/echo
 %attr(755,root,root) %{_datadir}/bin/pwd
-%attr(755,root,root) %{_datadir}/bin/rm
-%attr(755,root,root) %{_datadir}/bin/rmdir
 
 %dir %{_datadir}/%{_lib}
-%attr(755,root,root) %{_datadir}/%{_lib}/ld-linux.so.*
+%attr(755,root,root) %{_datadir}/lib/ld-linux.so.*
 %attr(755,root,root) %{_datadir}/%{_lib}/lib*.so.*
+%dir %{_datadir}/%{_lib}/tls
+%attr(755,root,root) %{_datadir}/%{_lib}/tls/lib*.so.*
 
 %dir %{_datadir}/usr
 %dir %{_datadir}/usr/bin
 %attr(755,root,root) %{_datadir}/usr/bin/groups
-%attr(755,root,root) %{_datadir}/usr/bin/scp
 %attr(755,root,root) %{_datadir}/usr/bin/rsync
 
 %dir %{_datadir}/usr/%{_lib}
-%attr(755,root,root) %{_datadir}/usr/%{_lib}/lib*.so.*
-%attr(755,root,root) %{_datadir}/usr/%{_lib}/lib*.so
 %dir %{_datadir}/usr/%{_lib}/openssh
 %attr(755,root,root) %{_datadir}/usr/%{_lib}/openssh/sftp-server
 %endif
